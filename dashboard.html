@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KH-Viral Agent Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        /* LEFT SIDE - AGENT VISUALIZATION */
+        .agent-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .agent-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .agent-visual {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin-bottom: 30px;
+        }
+
+        .agent-container {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            }
+            50% {
+                box-shadow: 0 10px 40px rgba(102, 126, 234, 0.8);
+            }
+        }
+
+        .agent-icon {
+            font-size: 100px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .agent-status {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .agent-info {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .info-item {
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+
+        .info-label {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* RIGHT SIDE - CHAT INTERFACE */
+        .chat-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .chat-box {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            height: 350px;
+            overflow-y: auto;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-user {
+            justify-content: flex-end;
+        }
+
+        .message-agent {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            word-wrap: break-word;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .bubble-user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 0;
+        }
+
+        .bubble-agent {
+            background: #e3f2fd;
+            color: #333;
+            border-bottom-left-radius: 0;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: border-color 0.3s;
+        }
+
+        .input-area input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .send-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            opacity: 0.9;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                opacity: 0.3;
+                transform: translateY(0);
+            }
+            30% {
+                opacity: 1;
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 KH-Viral Agent</h1>
+            <p>Your Personal AI-Powered News & Content Agent</p>
+        </header>
+
+        <div class="content">
+            <!-- LEFT SIDE - AGENT VISUALIZATION -->
+            <div class="agent-section">
+                <div class="agent-title">Meet Your Agent</div>
+                
+                <div class="agent-visual">
+                    <div class="agent-container">
+                        <div class="agent-icon">🤖</div>
+                        <div class="agent-status">✓</div>
+                    </div>
+                </div>
+
+                <div class="agent-info">
+                    <div class="info-item">
+                        <span class="info-label">Agent Name:</span> KH-Viral
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Status:</span>
+                        <span style="color: #4CAF50; font-weight: bold;">🟢 ONLINE</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Repository:</span> Private on GitHub
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Owner:</span> mdislaha-code
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number" id="articlesCount">0</div>
+                        <div class="stat-label">Articles Found</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="viralScore">0</div>
+                        <div class="stat-label">Avg Viral Score</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="contentCreated">0</div>
+                        <div class="stat-label">Content Created</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="postsPublished">0</div>
+                        <div class="stat-label">Posts Published</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE - CHAT INTERFACE -->
+            <div class="chat-section">
+                <div class="chat-title">💬 Chat with Agent</div>
+                
+                <div class="chat-box" id="chatBox">
+                    <div class="chat-message message-agent">
+                        <div class="message-bubble bubble-agent">
+                            👋 Hello! I'm KH-Viral, your personal AI news agent. I collect viral news, create engaging content, and post to social media. What would you like to know?
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        placeholder="Ask me about news, content, automation..."
+                        onkeypress="handleKeyPress(event)"
+                    >
+                    <button class="send-btn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const responses = {
+            'hello': 'Hi there! 👋 I\'m KH-Viral, your AI news agent. How can I help you today?',
+            'what do you do': 'I collect trending news from 5 sources (Google News, Twitter, Reddit, YouTube, Instagram), analyze them with ChatGPT for viral potential, create multimedia content (videos, thumbnails, voiceovers), and post to social platforms automatically!',
+            'how do i run you': 'You can run me in 2 ways: 1) Locally: python main.py 2) Automatically: GitHub Actions runs me daily at 6 AM UTC',
+            'where are you': 'I\'m in your private GitHub repository: https://github.com/mdislaha-code/KH-Viral. I also run on GitHub Actions cloud servers!',
+            'what is my viral score': 'My viral scoring algorithm rates content from 0-100 based on engagement potential, emotional impact, hooks, and relevance.',
+            'how many sources': 'I collect from 5 sources: Google News, Twitter/X, Reddit, YouTube Trends, and Instagram Trends.',
+            'can i use you': 'Yes! You can invite collaborators to use me. Go to GitHub Settings → Access Control to add team members.',
+            'what is automation': 'GitHub Actions runs me automatically every day at 6 AM UTC. No manual work needed!',
+            'how do i stop you': 'You can disable the workflow in GitHub Actions, or delete the .github/workflows/daily_agent.yml file.',
+            'what are your features': 'Multi-source news collection, AI content rewriting, viral scoring, multimedia creation, multi-platform posting, daily automation, and private access control.',
+            'default': 'That\'s an interesting question! I\'m designed to collect viral news and create engaging content. For specific setup help, check the SETUP_GUIDE.md in my repository.'
+        };
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Simulate agent thinking (1-2 seconds)
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = getAgentResponse(message);
+                addMessage(response, 'agent');
+            }, 1000 + Math.random() * 1000);
+        }
+
+        function getAgentResponse(message) {
+            const msg = message.toLowerCase();
+            
+            for (const [key, value] of Object.entries(responses)) {
+                if (msg.includes(key)) {
+                    return value;
+                }
+            }
+            
+            return responses['default'];
+        }
+
+        function addMessage(text, sender) {
+            const chatBox = document.getElementById('chatBox');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender === 'user' ? 'message-user' : 'message-agent'}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = `message-bubble ${sender === 'user' ? 'bubble-user' : 'bubble-agent'}`;
+            bubble.textContent = text;
+            
+            messageDiv.appendChild(bubble);
+            chatBox.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const chatBox = document.getElementById('chatBox');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message message-agent';
+            messageDiv.id = 'typingIndicator';
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble bubble-agent';
+            
+            const indicator = document.createElement('div');
+            indicator.className = 'typing-indicator';
+            indicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+            
+            bubble.appendChild(indicator);
+            messageDiv.appendChild(bubble);
+            chatBox.appendChild(messageDiv);
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) indicator.remove();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Update stats periodically
+        function updateStats() {
+            document.getElementById('articlesCount').textContent = Math.floor(Math.random() * 150) + 50;
+            document.getElementById('viralScore').textContent = Math.floor(Math.random() * 40) + 60;
+            document.getElementById('contentCreated').textContent = Math.floor(Math.random() * 10) + 5;
+            document.getElementById('postsPublished').textContent = Math.floor(Math.random() * 8) + 3;
+        }
+
+        // Initial stats
+        updateStats();
+        // Update every 10 seconds
+        setInterval(updateStats, 10000);
+    </script>
+</body>
+</html>
