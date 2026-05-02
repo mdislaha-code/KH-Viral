@@ -1,2 +1,2 @@
-# KH-Viral
+# Atacaf KH-Viral
 AI Agent for Viral News Content
